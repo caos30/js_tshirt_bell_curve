@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title> T-SHIRT bell curve </title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<style>
+		html{height:100%;}
+		html,body{margin:0px; padding:0px;}
+		body, * {font-family:monospace, sans-serif,verdana,arial;}
+		body{
+			font-size:100%;
+			background-color: #007998;
+			//background: linear-gradient(135deg, #007998 0%, #002233 100%) repeat scroll 0% 0% transparent;
+		}
+		* { border-radius: 5px;box-sizing: border-box; }
+
+		input, textarea, select {font-size:1rem;}
+
+		.a_c{text-align: center;}
+		.n_w{white-space: nowrap;}
+		.bt{
+			text-decoration:none;
+			display:inline-block;
+			padding:5px;
+			margin:3px;
+			background-color:#333;
+			color: #ccc;
+			font-weight:bold;
+			letter-spacing:1px;
+			border: 1px #666 solid;
+			border-left: 3px #666 solid;
+			border-right: 3px #666 solid;
+			outline:0;
+		}
+		.bt:focus,
+		.bt:hover{
+				border: 1px #aaa solid;
+				border-left: 3px #aaa solid;
+				border-right: 3px #aaa solid;
+				box-shadow: 0px 0px 3px #ccc;
+				color:#fff;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="tshirt_calculator">
+		<h2>Calcular camisetas a encargar</h2>
+		<table style="text-align:center;">
+			<tr>
+				<td style='text-align:right;'><b>Número total: </b></td>
+				<td style='text-align:left;'><input type="text" id="tshirt_tot" value="50"
+					onkeyup="js_tshirt_recalculate();" /></td>
+			</tr>
+			<tr>
+				<td style='text-align:right;'><b>País: </b></td>
+				<td style='text-align:left;'><select id="tshirt_sets"
+					style="line-height:2.4rem;height:2.4rem;font-size:1.2rem;padding:0 1rem;background-color:#333;color:yellow;border:1px #555 solid;"
+					onchange="js_tshirt_recalculate();">
+					</select></td>
+			</tr>
+		</table>
+		
+		<h3>Unidades por tamaño (<span>&nbsp;</span>)</h3>
+		<table id='tshirt_calculations'>
+			<tbody>&nbsp;</tbody>
+		</table>
+
+		<p class='tshirt_signature'><a href="https://github.com/caos30/" target="_blank">caos30@GitHub</a> -  (C) 2020 GPL v2 license</p>
+		
+		<script>
+			function js_tshirt_recalculate(){
+					var total = js_tshirt_get_integer(document.getElementById('tshirt_tot').value);
+					var set_key = document.getElementById('tshirt_sets').value;
+					var tableBody = document.getElementById('tshirt_calculations').getElementsByTagName('tbody')[0];
+					var html = "";
+					var DataSet = tshirt_DataSet[set_key];
+					Object.keys(DataSet['options']).map(function(objectKey, index) {
+						var percentage = DataSet['options'][objectKey];
+						var n = Math.ceil(total * percentage / 100);
+						html += "<tr><td><b>"+objectKey+"</b></td>"
+							 + "<td>"+percentage+"%</td>"
+							 + "<td>&rarr;</td>"
+							 + "<td><b>"+n+"</b></td></tr>"; 
+					});
+					tableBody.innerHTML = html;
+					document.getElementById('tshirt_calculator')
+							.getElementsByTagName('h3')[0]
+							.getElementsByTagName('span')[0]
+							.innerHTML = DataSet['title'];
+			}
+			function js_tshirt_get_integer(foo){
+				foo.replace(/[^0-9]/g,'');
+				if (!foo || foo=='' || isNaN(foo)) 
+					return 0;
+				else
+					return parseInt(foo);
+			}
+			function js_tshirt_populate_select(){
+				var select_countries = document.getElementById('tshirt_sets');
+				Object.keys(tshirt_DataSet).map(function(objectKey, index) {
+					var opt = document.createElement('option');
+						opt.value = tshirt_DataSet[objectKey]['key'];
+						opt.innerHTML = tshirt_DataSet[objectKey]['title'];
+						select_countries.appendChild(opt);
+				});				
+			}
+			document.addEventListener("DOMContentLoaded", function(event) {
+				js_tshirt_populate_select();
+				js_tshirt_recalculate();
+			});
+			var tshirt_DataSet = {
+				'average' : {	'key':'average','title': '--- media ---', 
+								'options': {'XS':0 , 'S':10 , 'M':33 , 'L':33 , 'XL':19 , 'XXL':5 }},
+				'germany' : {	'key':'germany','title': 'Alemania', 
+								'options': {'XS':0 , 'S':5 , 'M':33 , 'L':34 , 'XL':22 , 'XXL':6 }},
+				'australia':{	'key':'australia','title': 'Australia', 
+								'options': {'XS':0 , 'S':8 , 'M':27 , 'L':33 , 'XL':22 , 'XXL':10 }},
+				'canada' : 	{	'key':'canada','title': 'Canadá', 
+								'options': {'XS':0 , 'S':4 , 'M':37 , 'L':35 , 'XL':18 , 'XXL':6 }},
+				'france' : 	{	'key':'france','title': 'Francia', 
+								'options': {'XS':0 , 'S':5 , 'M':37 , 'L':32 , 'XL':20 , 'XXL':6 }},
+				'japan' : 	{	'key':'japan','title': 'Japón', 
+								'options': {'XS':0 , 'S':29 , 'M':30 , 'L':32 , 'XL':9 , 'XXL':0 }},
+				'uk' 	: 	{	'key':'uk','title': 'Reino Unido', 
+								'options': {'XS':0 , 'S':8 , 'M':33 , 'L':34 , 'XL':18 , 'XXL':7 }},
+				'usa' : 	{	'key':'usa','title': 'USA', 
+								'options': {'XS':0 , 'S':8 , 'M':29 , 'L':28 , 'XL':20 , 'XXL':15 }},
+			}
+		</script>
+		
+		<style>	
+			#tshirt_calculator{text-align:center;}
+			#tshirt_calculator h3, #tshirt_calculator p{margin-top:3rem;}
+			.tshirt_signature{margin-top:5rem!important;}
+			.tshirt_signature a{color:#ddd;}
+			#tshirt_calculator table{width:auto;margin:3em auto;margin-top:1rem;}
+				#tshirt_calculator table td{padding:0.5em 1em;}
+			#tshirt_calculator input, #tshirt_calculator select{line-height:2.4rem;height:2.4rem;font-size:1.2rem;padding:0 1rem;background-color:#333;color:yellow;border:1px #555 solid;}
+			#tshirt_calculator input{text-align:right;width:4em;}
+			#tshirt_calculator select{text-align:center;width:10em;}
+		</style>
+
+	</div>
+	
+</body>
+</html>
+
